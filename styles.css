@@ -1,3 +1,5 @@
+
+
 body{
     background-color: #10F1F1;
 }
@@ -17,7 +19,7 @@ body{
     height: 600px;
     background-color: #10F1F1;
     color: #fff;
-    padding-top: 20px color blue;
+    padding-top: 5px;
     box-sizing: border-box;
 }
 .sidebar ul {
@@ -40,19 +42,26 @@ body{
     padding: 5px;
     width: 240px;
     height: auto;
-    display: inline-block;
+    display: flex;
     list-style-type: none;
 }
 
+.content2{
+    float: left;
+    margin-right: 5px;
+    flex-direction: column;
+    border: 2px solid blue;
+}
 /*Estilos para contenido de la pagina*/
 .page {
-    display: inline-block;
-    margin-left: 265px;
+    margin-left: 269px;
+    align-items: center;
+    display: grid;
 }
 
 .Tu{
+    display: flex;
     text-align: center;
-    display: block;
     margin-left: 269px;
 }
 /* Estilos para el menú horizontal */
