@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@floating-ui/dom": "^1.6.5",
+    "@floating-ui/react": "^0.26.13"
+  }
+}
