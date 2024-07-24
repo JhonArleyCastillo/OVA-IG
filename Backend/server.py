@@ -1,4 +1,4 @@
-import asyncio
+import asyncio # Hacer las llamadas asincronas atraves del sockets
 import websockets
 import numpy as np
 import torch 
@@ -9,7 +9,7 @@ from transformers import Wav2Vec2ForCTC, Wav2Vec2Processor
 import argparse 
 
 SERVER = "localhost"
-PORT = 8001
+PORT = 8003
 
 ENGLISH_MODEL = "facebook/Wac2vec2-large-960h-lv60-self"
 SPANISH_MODEL = "jonatasgrosman/wav2vec2-large-xlsr-53-spanish"
@@ -66,5 +66,8 @@ class SpeechRecognitionServer:
 if __name__ == '__main__':    
     
     parser = argparse.ArgumentParser()
-    parser.add_argument("-l", "--language", help = "Set language")            
+    parser.add_argument("-l", "--language", help = "Set language")
+    args = parser.parse_args()
+    
+    s = SpeechRecognitionServer(language=args.language)            
        
