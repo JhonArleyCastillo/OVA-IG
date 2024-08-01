@@ -11,7 +11,7 @@ import argparse
 SERVER = "localhost"
 PORT = 8003
 
-ENGLISH_MODEL = "facebook/Wac2vec2-large-960h-lv60-self"
+ENGLISH_MODEL = "facebook/wac2vec2-large-960h-lv60-self"
 SPANISH_MODEL = "jonatasgrosman/wav2vec2-large-xlsr-53-spanish"
 
 class SpeechRecognitionServer:

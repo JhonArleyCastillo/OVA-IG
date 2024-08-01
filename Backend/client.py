@@ -7,8 +7,8 @@ CHANNELS = 2                             # Se pueden capturar 2 canales mono o e
 RATE = 16000                              # Número de muestras a tomar por segundo
 FRAME_DURATION = 20                       #Estas 5 variables permiten setear el audio que va al servidor a través del cliente
 FORMAT = pyaudio.paInt16                  # Tiempo de duración de cada frame
-CHUNK = int(RATE = FRAME_DURATION / 1000) # Tipo de dato en que se guardaran los frame
-INPUT_DEVICE = "DTS:X Ultra"
+CHUNK = int(RATE / 1000) # Tipo de dato en que se guardaran los frame
+INPUT_DEVICE = "microfono"
 SERVER = "ws://localhost:8003/"
 
 # Funcion de validacion de audio

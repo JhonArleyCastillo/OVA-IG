@@ -1,15 +1,11 @@
 import pyttsx3
 import speech_recognition as sr
-import datetime
-
-format_uni_user = "#archivo de audio"
 
 def init_tts_engine():
     engine = pyttsx3.init()
     engine.setProperty('rate', 150)
     engine.setProperty('volume', 1)
     return engine
-
 
 def speak(engine, text, language='es'):
     if language == 'en':
@@ -40,9 +36,6 @@ def listen_for_response(recognizer, microphone, language='es'):
     except sr.RequestError:
         print("Error al comunicarse con el servicio de reconocimiento de voz")
         return None
-        
-        
-
 
 def ask_questions(engine, recognizer, microphone, language='es'):
     if language == 'en':
@@ -52,26 +45,16 @@ def ask_questions(engine, recognizer, microphone, language='es'):
             "What is your address?",
             "What is your phone number?",
             "What is your email address?"
-            ""
-    ]
+        ]
     else:
         questions = [
             "¿Cuál es tu nombre?",
             "¿Cuál es tu edad?",
             "¿Cuál es tu dirección?",
             "¿Cuál es tu número de teléfono?",
-            "¿Cuál es tu correo electrónico?",
-            "¿Deseas guardar tu usuario"
-            
+            "¿Cuál es tu correo electrónico?"
         ]
-     
-    #if questions(5) == si or yes:
-       # si, yes = "guardar usuario en base de datos"
-        #questions1 = [
-           # 'Di, Hola Ova, {palabras_graves}, {Palabras_agudas}'
-          #  ]
-        
-        
+    
     responses = {}
     
     for question in questions:
@@ -85,13 +68,36 @@ def ask_questions(engine, recognizer, microphone, language='es'):
     
     return responses
 
+def initialize_ova(engine, recognizer, microphone):
+    print("<<<Inicializando Ova>>>")
+    while True:
+        print("Di 'Hola cero' para comenzar.")
+        response = listen_for_response(recognizer, microphone, 'es')
+        if response and 'hola cero' in response.lower():
+            break
+
+    language = 'es'
+    while True:
+        if language == 'es':
+            print("Puedes cambiar el idioma diciendo 'Hello cero' o 'Hi cero'.")
+        else:
+            print("You can change the language by saying 'Hola Ova'.")
+
+        response = listen_for_response(recognizer, microphone, language)
+        if response:
+            if language == 'es' and ('hello cero' in response.lower() or 'hi cero' in response.lower()):
+                language = 'en'
+                speak(engine, "Language changed to English.", language)
+            elif language == 'en' and 'hola ova' in response.lower():
+                language = 'es'
+                speak(engine, "Idioma cambiado a español.", language)
+            else:
+                responses = ask_questions(engine, recognizer, microphone, language)
+                print("Respuestas obtenidas:", responses)
+
 # Inicializar los motores
 tts_engine = init_tts_engine()
 recognizer, microphone = init_recognizer()
 
-# Definir el idioma (es para español, en para inglés)
-LANGUAGE = 'es'  # Cambia a 'en' para inglés
-
-# Hacer preguntas y obtener respuestas
-responses = ask_questions(tts_engine, recognizer, microphone, LANGUAGE)
-print("Respuestas obtenidas:", responses)
+# Inicializar OVA y gestionar las preguntas
+initialize_ova(tts_engine, recognizer, microphone)
