@@ -62,11 +62,11 @@ class OVAApp:
     def ask_questions(self):
         if self.language == 'en':
             questions = [
-                "What is your name?",
+                "What's your name?",
                 "How old are you?",
-                "What is your address?",
-                "What is your phone number?",
-                "What is your email address?"
+                "What's your address?",
+                "What's your phone number?",
+                "What's your email address?"
             ]
         else:
             questions = [

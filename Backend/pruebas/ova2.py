@@ -16,11 +16,13 @@ class OVAApp:
         self.start_button = tk.Button(root, text="Iniciar OVA", command=self.initialize_ova)
         self.start_button.pack(pady=10)
         #Detener programa
-        
+        self.stop_button = tk.Button(root, text="Terminar OVA", command=self.terminate_ova)
+        self.stop_button.pack(pady=10)
         
         self.tts_engine = self.init_tts_engine()
         self.recognizer, self.microphone = self.init_recognizer()
         self.language = 'es'
+        self.running = False
         
     def init_tts_engine(self): #Se inicializan los motores TTS y de reconocimiento de voz, y se define el idioma inicial como español.
         engine = pyttsx3.init()
@@ -61,11 +63,11 @@ class OVAApp:
     def ask_questions(self):
         if self.language == 'en':
             questions = [
-                "What is your name?",
+                "What's your name?",
                 "How old are you?",
-                "What is your address?",
-                "What is your phone number?",
-                "What is your email address?"
+                "What's your address?",
+                "What's your phone number?",
+                "What's your email address?"
             ]
         else:
             questions = [
@@ -73,7 +75,8 @@ class OVAApp:
                 "¿Cuál es tu edad?",
                 "¿Cuál es tu dirección?",
                 "¿Cuál es tu número de teléfono?",
-                "¿Cuál es tu correo electrónico?"
+                "¿Cuál es tu correo electrónico?",
+                "¿Deseas guardar tu usuario"
             ]
         
         responses = {} #se guardan las respuestas en un diccionario
@@ -85,33 +88,38 @@ class OVAApp:
                 response = self.listen_for_response()
             responses[question] = response
             self.speak(f"I understand your {question.lower()} is {response}." if self.language == 'en'
-                       else f"Entiendo que tu {question.lower()} es {response}.")
+                       else f"Entiendo que tu respuesta a la pregunta {question.lower()} es {response}.")
         
         self.log_message("Respuestas obtenidas: " + str(responses))
         
     def initialize_ova(self):
+        self.running = True
         threading.Thread(target=self.run_ova).start()
+        
+    def terminate_ova(self):
+        self.running = False
+        self.log_message("OVA terminado.")
         
     def run_ova(self):
         self.log_message("<<<Inicializando Ova>>>")
         while True:
-            self.log_message("Di 'Hola Ova' para comenzar.")
+            self.log_message("Di 'Hola hola' para comenzar.")
             response = self.listen_for_response()
-            if response and 'hola ova' in response.lower():
+            if response and 'hola hola' in response.lower():
                 break
         
-        while True:
+        while self.running:
             if self.language == 'es':
-                self.log_message("Puedes cambiar el idioma diciendo 'Hello Ova' o 'Hi Ova'.")
+                self.log_message("Puedes cambiar el idioma diciendo 'Hello hello' o 'Hi ova'.")
             else:
-                self.log_message("You can change the language by saying 'Hola Ova'.")
+                self.log_message("You can change the language by saying 'Hola hola'.")
             
             response = self.listen_for_response()
             if response:
-                if self.language == 'es' and ('hello ova' in response.lower() or 'hi ova' in response.lower()):
+                if self.language == 'es' and ('hello hello' in response.lower() or 'hi ova' in response.lower()):
                     self.language = 'en'
                     self.speak("Language changed to English.")
-                elif self.language == 'en' and 'hola ova' in response.lower():
+                elif self.language == 'en' and 'hola hola' in response.lower():
                     self.language = 'es'
                     self.speak("Idioma cambiado a español.")
                 else:
