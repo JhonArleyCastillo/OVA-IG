@@ -1,11 +1,10 @@
-#Programa final
+# Realizar comparativa entre twice y ova7
 
-import tkinter as tk #Se crea una ventana principal usando tkinter con un área de texto desplazable (ScrolledText) para mostrar mensajes y un botón para iniciar OVA.
+import tkinter as tk
 from tkinter.scrolledtext import ScrolledText
-import threading  #Se utiliza threading para ejecutar el método run_ova en un hilo separado, permitiendo que la interfaz gráfica permanezca receptiva.
-import pyttsx3  # Libreria de convesion de voz a texto
-import speech_recognition as sr #Libreria para reconocimiento de voz
-
+import threading
+import pyttsx3
+import speech_recognition as sr
 
 class OVAApp:
     def __init__(self, root):
@@ -14,27 +13,23 @@ class OVAApp:
         
         self.text_area = ScrolledText(root, wrap=tk.WORD, width=50, height=20, font=("Arial", 12))
         self.text_area.pack(pady=10, padx=10)
-        #Iniciar programa
-        self.start_button = tk.Button(root, text="Iniciar OVA", command=self.initialize_ova)
+        
+        self.start_button = tk.Button(root, text="Iniciar OVA", command=self.toggle_ova)
         self.start_button.pack(pady=10)
-        #Detener programa
-        self.stop_button = tk.Button(root, text="Terminar OVA", command=self.terminate_ova)
-        self.stop_button.pack(pady=10)
         
         self.tts_engine = self.init_tts_engine()
         self.recognizer, self.microphone = self.init_recognizer()
         self.language = 'es'
         self.running = False
-        
-        
-        
-    def init_tts_engine(self): #Se inicializan los motores TTS y de reconocimiento de voz, y se define el idioma inicial como español.
+        self.stop_listening = None
+
+    def init_tts_engine(self):
         engine = pyttsx3.init()
         engine.setProperty('rate', 150)
         engine.setProperty('volume', 1)
         return engine
     
-    def speak(self, text): # Se determina las voces utilizadas según el lenguaje
+    def speak(self, text):
         if self.language == 'en':
             self.tts_engine.setProperty('voice', 'com.apple.speech.synthesis.voice.Alex')
         else:
@@ -49,18 +44,18 @@ class OVAApp:
     
     def listen_for_response(self):
         with self.microphone as source:
-            self.log_message("Escuchando...") #Los mensajes se muestran en el área de texto desplazable con este metodo
+            self.log_message("Escuchando...")
             self.recognizer.adjust_for_ambient_noise(source)
             audio = self.recognizer.listen(source)
         
-        try: #Muestra los mensajes segun lo escuchado
+        try:
             response = self.recognizer.recognize_google(audio, language='en-US' if self.language == 'en' else 'es-ES')
             self.log_message(f"Escuchaste: {response}")
             return response
         except sr.UnknownValueError:
             self.log_message("No se pudo entender el audio")
             return None
-        except sr.RequestError: #Si no cuenta con conexion al servicio de reconocimiento de voz muestra este mensaje
+        except sr.RequestError:
             self.log_message("Error al comunicarse con el servicio de reconocimiento de voz")
             return None
         
@@ -80,10 +75,10 @@ class OVAApp:
                 "¿Cuál es tu dirección?",
                 "¿Cuál es tu número de teléfono?",
                 "¿Cuál es tu correo electrónico?",
-                "¿Deseas guardar tu usuario"
+                "¿Deseas guardar tu usuario?"
             ]
             
-        responses = {} #se guardan las respuestas en un diccionario
+        responses = {}
         
         for question in questions:
             self.speak(question)
@@ -96,33 +91,40 @@ class OVAApp:
         
         self.log_message("Respuestas obtenidas: " + str(responses))
         
+    def toggle_ova(self):
+        if not self.running:
+            self.initialize_ova()
+        else:
+            self.terminate_ova()
+        
     def initialize_ova(self):
-        if  not self.running:
+        if not self.running:
             self.running = True
+            self.start_button.config(text="Detener OVA")
             self.ova_thread = threading.Thread(target=self.run_ova)
             self.ova_thread.start()
         
     def terminate_ova(self):
-            self.log_message("OVA terminado.")
+        if self.running:
             self.running = False
-            
+            self.start_button.config(text="Iniciar OVA")
+            self.log_message("OVA terminado.")
+            self.tts_engine.stop()
+            if self.stop_listening:
+                self.stop_listening(wait_for_stop=False)
         
     def run_ova(self):
-        self.log_message("<<<Inicializando Ova>>>")
-        while True:
+        self.log_message("<<<Inicializando OVA>>>")
+        while not self.running:
             self.log_message("Di 'Hola hola' para comenzar.")
             response = self.listen_for_response()
             if response and 'hola hola' in response.lower():
-                break
+                self.running = True
         
-        while self.running:
-            if self.language == 'es':
-                self.log_message("Puedes cambiar el idioma diciendo 'Hello hello' o 'Hi ova'.")
-            else:
-                self.log_message("You can change the language by saying 'Hola hola'.")
-            
-            response = self.listen_for_response()
-            if response:
+        def callback(recognizer, audio):
+            try:
+                response = recognizer.recognize_google(audio, language='en-US' if self.language == 'en' else 'es-ES')
+                self.log_message(f"Escuchaste: {response}")
                 if self.language == 'es' and ('hello hello' in response.lower() or 'hi ova' in response.lower()):
                     self.language = 'en'
                     self.speak("Language changed to English.")
@@ -131,10 +133,22 @@ class OVAApp:
                     self.speak("Idioma cambiado a español.")
                 else:
                     self.ask_questions()
-                    
+            except sr.UnknownValueError:
+                self.log_message("No se pudo entender el audio")
+            except sr.RequestError:
+                self.log_message("Error al comunicarse con el servicio de reconocimiento de voz")
+        
+        self.stop_listening = self.recognizer.listen_in_background(self.microphone, callback)
+        
+        while self.running:
+            pass
+        
+        if self.stop_listening:
+            self.stop_listening(wait_for_stop=False)
+        
     def log_message(self, message):
-        self.text_area.insert(tk.END, message + "\n")
-        self.text_area.see(tk.END)
+        self.text_area.after(0, self.text_area.insert, tk.END, message + "\n")
+        self.text_area.after(0, self.text_area.see, tk.END)
 
 if __name__ == "__main__":
     root = tk.Tk()

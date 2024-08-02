@@ -137,3 +137,4 @@ if __name__ == "__main__":
     root = tk.Tk()
     app = OVAApp(root)
     root.mainloop()
+# Se Bloque el programa al cliclear en el boton terminar programa

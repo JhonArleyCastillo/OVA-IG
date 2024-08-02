@@ -133,3 +133,4 @@ if __name__ == "__main__":
     root = tk.Tk()
     app = OVAApp(root)
     root.mainloop()
+## sigue funcionando aun con el boton terminar programa, actualizacion fallida

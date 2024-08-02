@@ -93,12 +93,15 @@ class OVAApp:
         self.log_message("Respuestas obtenidas: " + str(responses))
         
     def initialize_ova(self):
-        self.running = True
-        threading.Thread(target=self.run_ova).start()
+        if not self.running:
+            self.running = True
+            self.ova_thread = threading.Thread(target=self.run_ova)
+            self.ova_thread.start()
         
     def terminate_ova(self):
         self.running = False
         self.log_message("OVA terminado.")
+        
         
     def run_ova(self):
         self.log_message("<<<Inicializando Ova>>>")
@@ -133,3 +136,4 @@ if __name__ == "__main__":
     root = tk.Tk()
     app = OVAApp(root)
     root.mainloop()
+#Archivo de prueba para la actualizacion de items
