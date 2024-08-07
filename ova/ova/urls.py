@@ -16,14 +16,19 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from ova.views import saludo
+from django.urls import include
+from Ova_Voice.api import ova_api
+
 
 urlpatterns = [
+    path('api/ova/', ova_api, name='ova_api'),
     path('admin/', admin.site.urls),
+    path('saludo/', saludo),
+    path('Ova_Voice/', include('Ova_Voice.urls')),   
+    
 ]
-from django.contrib import admin
-from django.urls import include, path
 
-urlpatterns = [
-    path("Ova_Voice/", include("Ova_Voice.urls")),
-    path("admin/", admin.site.urls),
-]
+
+
+

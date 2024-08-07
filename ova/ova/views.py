@@ -1,3 +1,21 @@
+from django.http import HttpResponse
+from django.template import Template, context
+
+
+def saludo(request): #primera vista
+    
+    doc_externo = open("C:/Users/gemac/OVA/templates/index.html")
+    
+    plt = Template(doc_externo.read())
+    
+    doc_externo.close()
+    
+    ctx = context()
+    
+    documento = plt.render(ctx)
+    
+    return HttpResponse(documento)
+
 import tkinter as tk
 from tkinter.scrolledtext import ScrolledText
 import pyttsx3
@@ -5,18 +23,6 @@ import speech_recognition as sr
 import threading
 import requests
 import queue
-from django.http import HttpResponse
-
-def index(request):
-    return HttpResponse("Hola, este es el índice de Ova_Voice")
-# Ova_Voice/urls.py
-from django.urls import path
-from . import views
-
-urlpatterns = [
-    path("", views.index, name="index"),
-    # otros patrones de URL
-]
 
 class OVAApp:
     def __init__(self, root):

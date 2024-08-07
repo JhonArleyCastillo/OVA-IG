@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>OVA Interface</title>
+    <script>
+        async function fetchData() {
+            const response = await fetch('/api/ova/');
+            const data = await response.json();
+            document.getElementById('apiData').innerText = JSON.stringify(data, null, 2);
+        }
+        window.onload = fetchData;
+    </script>
+</head>
+<body>
+    <h1>OVA Interface</h1>
+    <p>Esta es la interfaz de OVA</p>
+    <pre id="apiData"></pre>
+</body>
+</html>
