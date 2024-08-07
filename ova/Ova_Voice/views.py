@@ -1,4 +1,3 @@
-#Programa final
 
 import tkinter as tk #Se crea una ventana principal usando tkinter con un área de texto desplazable (ScrolledText) para mostrar mensajes y un botón para iniciar OVA.
 from tkinter.scrolledtext import ScrolledText
@@ -15,19 +14,15 @@ class OVAApp:
         self.text_area = ScrolledText(root, wrap=tk.WORD, width=50, height=20, font=("Arial", 12))
         self.text_area.pack(pady=10, padx=10)
         #Iniciar programa
-        self.start_button = tk.Button(root, text="Iniciar OVA", command=self.initialize_ova)
+        self.start_button = tk.Button(root, text="Iniciar OVA", command=self.toggle_ova)
         self.start_button.pack(pady=10)
-        #Detener programa
-        self.stop_button = tk.Button(root, text="Terminar OVA", command=self.terminate_ova)
-        self.stop_button.pack(pady=10)
         
         self.tts_engine = self.init_tts_engine()
         self.recognizer, self.microphone = self.init_recognizer()
         self.language = 'es'
         self.running = False
-        
-        
-        
+        self.stop_listening = None
+           
     def init_tts_engine(self): #Se inicializan los motores TTS y de reconocimiento de voz, y se define el idioma inicial como español.
         engine = pyttsx3.init()
         engine.setProperty('rate', 150)
@@ -95,6 +90,12 @@ class OVAApp:
                        else f"Entiendo que tu respuesta a la pregunta {question.lower()} es {response}.")
         
         self.log_message("Respuestas obtenidas: " + str(responses))
+    
+    def toggle_ova(self):
+        if not self.running:
+            self.initialize_ova()
+        else:
+            self.terminate_ova()
         
     def initialize_ova(self):
         if  not self.running:
@@ -103,8 +104,13 @@ class OVAApp:
             self.ova_thread.start()
         
     def terminate_ova(self):
-            self.log_message("OVA terminado.")
+        if self.running:
             self.running = False
+            self.start_button.config(text="Iniciar OVA")
+            self.log_message("OVA terminado.")
+            self.tts_engine.stop()
+            if self.stop_listening:
+                self.stop_listening(wait_for_stop=False)
             
         
     def run_ova(self):
@@ -140,3 +146,9 @@ if __name__ == "__main__":
     root = tk.Tk()
     app = OVAApp(root)
     root.mainloop()
+    
+from django.http import HttpResponse
+
+
+def index(request):
+    return HttpResponse("Hello, world. You're at the polls index.")
