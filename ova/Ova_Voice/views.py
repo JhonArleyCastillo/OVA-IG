@@ -6,12 +6,13 @@ import threading
 import requests
 import queue
 from django.http import HttpResponse
+from django.urls import path
+from . import views
 
 def index(request):
     return HttpResponse("Hola, este es el índice de Ova_Voice")
 # Ova_Voice/urls.py
-from django.urls import path
-from . import views
+
 
 urlpatterns = [
     path("", views.index, name="index"),

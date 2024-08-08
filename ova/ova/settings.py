@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+import sys
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -26,20 +27,30 @@ SECRET_KEY = 'django-insecure-*tx#i(j-$8=4^rfg#g_===q*-k2-v+j2ep9+@zw2egc*jn2tb!
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', '.pythonanywhere.com']
 
+TESTING = "test" in sys.argv
 
+if not TESTING:
+    INSTALLED_APPS = [
+        "debug_toolbar",
+    ]
+    MIDDLEWARE = [
+        "debug_toolbar.middleware.DebugToolbarMiddleware",
+        
+    ]
 # Application definition
 
 INSTALLED_APPS = [
-    'rest_framework',
-    'Ova_Voice.apps.OvaVoiceConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'Ova_Voice.apps.OvaVoiceConfig',
+    'rest_framework',
+    "debug_toolbar",
 ]
 
 MIDDLEWARE = [
@@ -50,6 +61,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 
 ROOT_URLCONF = 'ova.urls'
@@ -108,7 +120,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-es'
 
-TIME_ZONE = 'UTC-5'
+TIME_ZONE = 'America/Bogota'
 
 USE_I18N = True
 
@@ -119,8 +131,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = 'static/'
-
+STATIC_ROOT = BASE_DIR / 'static'
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
