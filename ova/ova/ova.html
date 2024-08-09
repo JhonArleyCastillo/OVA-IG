@@ -15,6 +15,30 @@
     <h1>OVA Interface1</h1>
     <p>Esta es la interfaz de OVA</p>
     <pre id="apiData"></pre>
+    <button id="toggle-ova-button">Iniciar OVA</button>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('#toggle-ova-button').click(function() {
+            $.ajax({
+                url: "{% url 'toggle-ova' %}",
+                type: 'POST',
+                dataType: 'json',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                success: function(response) {
+                    if (response.status === 'started') {
+                        $('#toggle-ova-button').text('Detener OVA');
+                    } else {
+                        $('#toggle-ova-button').text('Iniciar OVA');
+                    }
+                }
+            });
+        });
+    });
+</script>
     {% if debug %}
     {% debug %}
 {% endif %}

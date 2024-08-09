@@ -6,18 +6,21 @@ import threading
 import requests
 import queue
 from django.http import HttpResponse
-from django.urls import path
-from . import views
+from django.http import JsonResponse
+from django.views import View
+
 
 def index(request):
     return HttpResponse("Hola, este es el índice de Ova_Voice")
-# Ova_Voice/urls.py
 
 
-urlpatterns = [
-    path("", views.index, name="index"),
-    # otros patrones de URL
-]
+class ToggleOVAView(View):
+    def post(self, request):
+        response = {
+            'status': 'started' if OVAApp.running else 'stopped'
+        }
+        return JsonResponse(response)
+
 
 class OVAApp:
     def __init__(self, root):
@@ -34,6 +37,7 @@ class OVAApp:
         self.recognizer, self.microphone = self.init_recognizer()
         self.language = 'es'
         self.running = False
+        self.ova_thread = None
         self.stop_listening = None
 
         self.message_queue = queue.Queue()
@@ -121,8 +125,10 @@ class OVAApp:
     def toggle_ova(self):
         if not self.running:
             self.initialize_ova()
+            self.start_button.config(text="Detener OVA")
         else:
             self.terminate_ova()
+            self.start_button.config(text="Iniciar OVA")
 
     def initialize_ova(self):
         if not self.running:
@@ -133,7 +139,6 @@ class OVAApp:
     def terminate_ova(self):
         if self.running:
             self.running = False
-            self.start_button.config(text="Iniciar OVA")
             self.log_message("OVA terminado.")
             self.tts_engine.stop()
             if self.stop_listening:
