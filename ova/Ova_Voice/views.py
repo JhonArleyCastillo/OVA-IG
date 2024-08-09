@@ -13,7 +13,6 @@ from django.views import View
 def index(request):
     return HttpResponse("Hola, este es el índice de Ova_Voice")
 
-
 class ToggleOVAView(View):
     def post(self, request):
         response = {

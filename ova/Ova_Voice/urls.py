@@ -6,11 +6,6 @@ from debug_toolbar.toolbar import debug_toolbar_urls
 urlpatterns = [
     path("", views.index, name="index"),
 ]
-from .views import ToggleOVAView
-
-urlpatterns = [
-    path('toggle-ova/', ToggleOVAView.as_view(), name='toggle-ova'),
-]
 
 
 if not settings.TESTING:

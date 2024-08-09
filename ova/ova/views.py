@@ -15,3 +15,4 @@ def saludo(request): #primera vista
     documento = plt.render(ctx)
     
     return HttpResponse(documento)
+

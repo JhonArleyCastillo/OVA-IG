@@ -1,4 +1,8 @@
 # api.py
+import os
+import django
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ova.settings')
+django.setup()
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
